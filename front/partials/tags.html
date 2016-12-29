@@ -1,0 +1,113 @@
+<div class="tags_div" > <!--  ng-controller="HideController" -->
+	<div class="blue_desc">
+		TAGS
+	</div>
+	<div class="tags_desc">
+		Choose any tag and start answering them all
+	</div>
+
+
+
+	<!-- <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Open Modal</button> -->
+
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Add Tag</h4>
+      </div>
+      <div class="modal-body">
+        <!-- <form class="form-inline hidden-form" ng-show="default1"> -->
+			<input type="text" name="tag" class="form-control" ng-model="data.thetag" placeholder="Tag Name">
+			<!-- <div class="col-md-12 row"> -->
+			<textarea name="tag" class="form-control" style="margin-top: 10px;" ng-model="data.tagdesc" placeholder="Tag Description (Must be between 30 and 250 characters)" rows="5"></textarea>
+			<!-- </div> -->
+			
+		<!-- </form> -->
+      </div>
+      <div class="modal-footer">
+      	<button class="btn btn-primary" ng-click="addtag()">
+			Submit
+		</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+
+
+
+
+	<div class="col-md-12">
+		<form class="form-inline tags_form_outer" role="form">
+		    <div class="form-group tags_form">
+		      <label class="search_toggle" for="email">Search:</label>
+		      <input type="email" class="form-control tagsearch"  placeholder="Search any tag">
+		    </div>
+	    </form>
+		<div class="add_tag"><!-- default1=!default1 -->
+				
+			<button type="button" class="btn btn-primary btn_add_tag" data-toggle="modal" data-target="#myModal">
+				<span class="glyphicon glyphicon-plus" aria-hidden="true" ></span>
+				Add Tag
+			</button>
+			
+		</div>
+		<div class="tags_ask_q">
+			<button class="btn btn-primary btn_ask" ui-sref="askquestion">
+				<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+				Ask a Question
+			</button>
+		</div>
+	</div>
+	<div class="col-md-3" ng-repeat="x in mydata.tags" style="padding-bottom: 20px;">
+		<div class="col-md-12 tagmain">
+			<!-- <strong>
+				{{x.tag}}
+			</strong> -->
+			<center>
+				<button class="btn btn-info btn-md" ui-sref="tagged({tag:x.tag})">
+					<strong>
+						{{x.tag}}
+					</strong>
+				</button>
+			</center>
+		</div>
+		<div class="col-md-12">
+			<center>
+				{{x.description}}
+			</center>
+		</div>
+	</div>
+	<div class="col-md-12">
+		<center>
+			<ul class="pagination pagi">
+				<li ng-click="first()" ng-class="{disabled : activeMenu == 1}">
+					<a >First</a>
+				</li>
+				<li ng-click="decrement()" ng-class="{disabled : activeMenu == 1}">
+					<a >Previous</a>
+				</li>
+
+						<li ><a ng-class="{selected : activeMenu == 1}" ng-click="paginate(value)">{{ value }}</a></li>
+				<li><a ng-class="{selected : activeMenu == 2}" ng-click="paginate(value+1)">{{value+1}}</a></li>
+				<li><a ng-class="{selected : activeMenu >= 3}" ng-click="paginate(value+2)">{{value+2}}</a></li>
+				<li><a ng-click="paginate(value+3)" ng-class="{disabled : 2 <=activeMenu }">{{value+3}}</a></li>
+				<li><a ng-click="paginate(value+4)">{{value+4}}</a></li>
+				<li ng-click="increment()"  ng-class="{disabled : activeMenu == stop}">
+					<a >Next</a>
+				</li>
+				<li ng-click="lastp()" ng-class="{disabled : activeMenu == stop}">
+					<a >Last</a>
+				</li>
+			</ul>
+		</center>
+	</div>
+</div>

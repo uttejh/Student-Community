@@ -1,0 +1,35 @@
+<div class="askq" ng-controller="askquestioncontroller">
+	<div class="blue_desc">
+		Ask Question
+	</div>
+	<div class="row pad_askq">
+		<div class="container">
+			<div class="col-lg-8">
+				<form role="form" method="post" >
+				  	<div class="form-group" >
+				   		<input type="text" class="form-control"  ng-model="formdata.title" placeholder="Type the title or question here">
+				  	</div>
+
+					<div action="" class="form-group" ng-controller="TinyMceController">
+				<textarea ui-tinymce="tinymceOptions" ng-model="formdata.tinymceModel" style="height:300px" placeholder="Body of your question"></textarea>
+					</div>
+					<!-- <textarea ng-model="formdata.tinymceModel">
+						
+					</textarea> -->
+					
+				  	<div class="form-group">
+				    	<input type="text" class="form-control" id="" ng-model="formdata.tags" ng-list placeholder="Atleast one related tag (eg: c,php)">
+				  	</div>
+				  	<div class="checkbox">
+				    	<label><input type="checkbox">Send responses via mail</label>
+				  	</div>
+				  	<button type="submit" class="btn btn-primary" ng-click="quessave()">Submit</button>
+				  	<button class="btn btn-default">Discard</button>
+				</form>
+			</div>
+			<div class="col-lg-4">
+				RULES:
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,86 @@
+<div class="getpapers">
+	<div class="blue_desc">
+		Download {{head}}
+	</div>
+	<div class="container col-lg-3 col-md-4 col-sm-4 col-xs-12 black_div">
+		<div class="container">
+			<div class="row">
+				<div class="black_content_choose">
+					CHOOSE YOUR SUBJECTS:
+				</div>
+			</div>
+		</div>
+		<form class="search_DF" role="search">
+		    <div class="form-group">
+		    	<input type="text" class="form-control" placeholder="Search" class="search_inp" ng-model="searchbox">
+		    </div>
+		    <!-- <button type="submit" class="btn btn-default mysubmit">Submit</button> -->
+		</form>
+		<div class="choose_div_gp">
+			<select class="form-control choose_type_get" ng-model="type" ng-change="getlist()">
+			   	<option selected disabled>Choose type</option>
+		        <option ng-selected="selected" value="questionpaper" ng-click="emptyme()">Question Papers</option>
+		        <option value="material" ng-click="emptyme()">Material</option>
+			</select>
+			
+		</div>
+		<div class="filter_head">
+			<div class="" ng-repeat="x in list | filter:searchbox ">
+				<div class="col-md-12">
+					<input type="checkbox" ng-checked="exist(x)" ng-click="toggleSelection(x)" ng-model="selected">{{x.name| lowercase}}
+				</div>
+			</div>
+		</div>
+		
+
+		<div class="paper_btns">
+			<div class="success_p col-md-12">
+				<button class="btn btn-success col-md-6" ng-click="getpapers()">GET</button>
+			</div>
+			<!-- <div class="clear_p">
+				<button class="btn btn-danger ">Clear</button>
+			</div> -->
+		</div>
+	</div>
+	<div class="paper_land_div col-lg-9 col-md-8 col-sm-8 col-xs-12">
+		<div class="row">
+			<div class="fade_div">
+				<!-- <div class="col-md-6">
+					<div class="alert alert-info">Download {{head}} by clicking on the name.</div>
+				</div> -->
+				<div class="upload_papers">
+					<button class="btn btn-primary" ui-sref="share">
+						<i class="fa fa-upload" aria-hidden="true"></i>
+						Upload Papers
+					</button>
+				</div>
+				<!-- <div class="col-md-12">
+					<div ng-repeat="y in choosen">
+						
+					</div>
+				</div> -->
+				<center class="mid_align" ng-hide="empty">
+					<div class="choose_sub_desc">CHOOSE A SUBJECT!</div> 
+					<i class="fa fa-check-square-o fa-4x"></i>
+				</center>
+				<div class="col-md-10 col-md-push-1" ng-show="empty">
+					<table class="table">
+						<thead>
+							<tr>
+								<th>Name Of The Subject</th>
+								<th>Branch</th>
+								<th>Year</th>
+								
+							</tr>
+							<tr ng-repeat="x in choosen">
+								<td><a ng-href="../back/public/{{x.filepath}}" download>{{x.name}}</a></td>
+								<td>{{x.branch}} </td>
+								<td>{{x.year}} </td>
+							</tr>
+						</thead>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

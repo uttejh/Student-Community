@@ -1,0 +1,70 @@
+<div class="share">
+	<div class="blue_desc">
+		SHARE <!-- {{ typedesc }} -->
+	</div>
+	<div class="container">
+		<div class="">
+			<div class="well well-lg col-md-8">
+				<form role="form" ng-submit="submit(item)">
+					
+						<div class="form-inline share_choosers_main">
+							<label for="">SUBJECT: &nbsp;</label>
+						    <!-- <select class="form-control ">
+						      	<option selected disabled>Choose Subject</option>
+
+						     
+						        <option>other</option>
+						    </select> -->
+						    <input type="text" class="form-control " ng-model="item.name" placeholder="Enter subject name" required>
+						</div>
+						<div class="form-inline share_choosers_main">
+							<label for="">BRANCH: &nbsp;&nbsp;</label>
+						    <!-- <select class="form-control ">
+						      	<option selected disabled>Choose Branch</option>
+						     
+						        <option>other</option>
+						    </select> -->
+						    <input type="text" class="form-control" placeholder="Enter branch name"  ng-model="item.branch" required>
+						</div>
+						<div class="form-inline share_choosers_main">
+							<label for="">
+								YEAR: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							</label>
+						   <!--  <select class="form-control " id="">
+						      	<option selected disabled>Choose Year</option>
+						     
+						        <option>other</option>
+						    </select> -->
+						    <input type="text" class="form-control" ng-model="item.year" placeholder="Enter Year" required>
+						</div>
+						<div class="share_choosers_main">
+							<label>IT IS A:</label>
+						   <div class="radio choose_radio">
+							 	<label><input type="radio" name="optradio" ng-model="item.rad" value="material" required>Material</label>
+							</div>
+							<div class="radio choose_radio">
+							 	<label><input type="radio" name="optradio" ng-model="item.rad" value="questionpaper" required>Question Paper</label>
+							</div>
+						</div>
+					
+					<div class="upload_file_share">
+						<!-- <button class="btn btn-primary" type=""> 
+							<i class="fa fa-upload" aria-hidden="true"></i>
+							UPLOAD FILE
+						</button> -->
+						<input type="file" file-model="item.filedat" ng-model-instant onchange="angular.element(this).scope().imageUpload(this)" required>
+					</div>
+					<div class="form-inline succ_dang_share">
+						<button class="btn btn-success" >
+							Submit
+						</button>
+						&nbsp;
+						<button class="btn btn-danger">
+							Cancel
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
