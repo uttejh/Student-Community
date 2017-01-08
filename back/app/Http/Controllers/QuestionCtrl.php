@@ -33,7 +33,7 @@ class QuestionCtrl extends Controller
      //->with(['asker'=>function($query){
         //     $query->select('id','username');
         // }])
-        $var = Question::select('q_id','title','askedby')->with('asker')->with(['qtags.tags'=>function($query){
+        $var = Question::select('q_id','title','askedby','isanswered')->with('asker')->with(['qtags.tags'=>function($query){
             $query->select('tagid','tag');
         }])->orderBy('q_id','DESC')->take(10)->skip($skip)->get();//->select('q_id','title')
 	    $total = Question::count();
@@ -70,7 +70,7 @@ class QuestionCtrl extends Controller
         $asker[]=0;
         $askerid[]=0;
         $tags[]=0;
-       
+        $ttt[]=0;
         $size = sizeof($var);
         for($i=0;$i<$size;$i++){
             $ret[$i] = $var[$i]['q_id'];
@@ -80,6 +80,7 @@ class QuestionCtrl extends Controller
             $tagsids[$i] = Question_tags::where('q_id','=',$ret[$i])->pluck('tag_id');
             $tags[$i] = Tags::where('tagid','=',$tagsids[$i])->pluck('tag');
             $ttt[$i] = Question_tags::with('tags')->where('q_id','=',$ret[$i])->take(10)->skip($skip)->get();
+            // if(empty($ttt))
         }
 
        
@@ -90,11 +91,14 @@ class QuestionCtrl extends Controller
 
     public function getquesdet(){
     	$id = Request::input('id');
+        $token = Request::header('JWT-AuthToken');
+        $qposer = Question::select('askedby')->where('q_id','=',$id)->first();
+        $user = Users::select('id')->where('token','=',$token)->first();
 
     	$question = Question::with('qtags.tags')->with(['asker'=>function($query){
             $query->select('id','username');
         }])->with(['comments'=>function($query){
-            $query->select('qid','comment','comment_by')->with(['commenter'=>function($query){
+            $query->select('qid','comment','comment_by','commentid')->with(['commenter'=>function($query){
                 $query->select('id','username');
             }]);
         }])->with(['answers.answercomments.anscommenter'=>function($query){
@@ -103,6 +107,13 @@ class QuestionCtrl extends Controller
             $query->select('id','username');
         }])->where('q_id','=',$id)
         ->first();
+
+        if( $user['id'] == $qposer['askedby'] ){
+            $message = '202';
+        }
+        else{
+            $message = '404';
+        }
         // $com = Comments::with('commenter')->where('q_id','=',$id)->get();
         // ->with(['answers'=>function($query){
         //         $query->select('answer','aid','qid');
@@ -157,7 +168,7 @@ class QuestionCtrl extends Controller
         $c = $question['created_at'];
         $date = date("d M y", time($c));
         $time = date("g:i a.", time($c));
-    	return array('question'=>$question['title'],'body'=>$question['body'],'tags'=>$tagnames,'answer'=>$question['answers'],'answercomments'=>$anscomments,'comments'=>$question['comments'],'asked'=>$question['asker'],'created'=>'On '.$date.' at '.$time,'q'=>$question);
+    	return array('question'=>$question['title'],'body'=>$question['body'],'tags'=>$tagnames,'answer'=>$question['answers'],'answercomments'=>$anscomments,'comments'=>$question['comments'],'asked'=>$question['asker'],'created'=>'On '.$date.' at '.$time,'q'=>$question,'isanswered'=>$question['isanswered'],'message' =>$message,'qid'=>$question['q_id']);
        
     }
 
@@ -169,8 +180,10 @@ class QuestionCtrl extends Controller
         
         $count = Users::where('token','=',$token)->count();
         $userid = Users::select('id')->where('token','=',$token)->first();
+        $q = Question::where('q_id','=',$id)->count();
 
-        if($count == 1)
+
+        if(($count == 1)&& ($q == 1))
         {
             $comm = new Comments;
             $comm->qid = $id;
@@ -195,7 +208,7 @@ class QuestionCtrl extends Controller
         $count = Users::where('token','=',$token)->count();
         $userid = Users::select('id')->where('token','=',$token)->first();
         
-        if($count == 1){
+        if($count == 1 ){
             $comm = new AnswerComment;
             $comm->qid = $id;
             $comm->aid = $ansid;
@@ -214,13 +227,136 @@ class QuestionCtrl extends Controller
         $answer = Request::input('answer');
         $token = Request::header('JWT-AuthToken');
         $userid = Users::select('id')->where('token','=',$token)->first();
+        $q = Question::where('q_id','=',$id)->count();
 
-        $ans = new Answers;
-        $ans->qid = $id;
-        $ans->answer = $answer;
-        $ans->answered_by = $userid['id'];
-        $ans->save();
+        if(!empty($answer) && ($q == 1)){
+            $ans = new Answers;
+            $ans->qid = $id;
+            $ans->answer = $answer;
+            $ans->answered_by = $userid['id'];
+            $ans->save();
+            return array('status'=>'done','message'=>'The answer is successfully posted');
+        }
+        else{
+            return array('status'=>'empty','message'=>'The answer field is empty');
+        }
 
-        return 'saved';
+        
+    }
+
+    public function markanswer(){
+        $id = Request::all();
+        $token = Request::header('JWT-AuthToken');
+        $qposer = Question::select('askedby')->where('q_id','=',$id['qid'])->first();
+
+        $themarker = Users::select('id')->where('token','=',$token)->first();
+
+        $isanswered = Question::select('isanswered')->where('q_id','=',$id['qid'])->first();
+
+        if($isanswered['isanswered'] == 1){
+            return 'The solution to the Question has been already marked.';
+        }else{
+            if($themarker['id']==$qposer['askedby'])
+            {
+                Question::where('q_id','=',$id['qid'])->update(['isanswered'=>1]) ;
+                Answers::where('aid','=',$id['id'])->update(['iscorrect'=>1]) ;
+                return 'success';
+            }   
+            else{
+                return 'You are not permitted to mark the answer.';
+            }
+        }
+    }
+
+    public function editquestion(){
+        $data = Request::all();
+
+        $token = Request::header('JWT-AuthToken');
+        $qposer = Question::select('askedby')->where('q_id','=',$data['id'])->first();
+
+        $theediter = Users::select('id')->where('token','=',$token)->first();
+
+        if($theediter['id']==$qposer['askedby'])
+        {
+            if(!empty($data['form']['title']) && !empty($data['form']['body']) )
+            {
+                Question::where('q_id','=',$data['id'])->update(['title'=>$data['form']['title'],'body'=>$data['form']['body']]) ;
+
+                return 'Updated Successfully!';
+            }
+            else{
+                return 'The Fields should not be null';
+            }
+        }
+        else{
+            return 'You are not permitted to Edit the answer';
+        }
+
+        // return $data['form']['title'];
+
+    }
+
+    public function deletequestion(){
+        $data = Request::all();
+
+        $token = Request::header('JWT-AuthToken');
+
+        $admintoken = Users::select('role')->where('token','=',$token)->first();
+
+        if($admintoken['role'] == 1){
+            Question::where('q_id','=',$data['id'])->first()->delete();
+            AnswerComment::where('qid','=',$data['id'])->delete();
+            return 'Question Deleted';
+        }else{
+            return 'bad request';
+        }
+    }
+
+    public function deleteanswer(){
+        $data = Request::all();
+
+        $token = Request::header('JWT-AuthToken');
+
+        $admintoken = Users::select('role')->where('token','=',$token)->first();
+
+        if($admintoken['role'] == 1){
+            
+            Answers::where('aid','=',$data['aid'])->first()->delete();
+            return 'Answer Deleted';
+        }else{
+            return 'bad request';
+        }
+    }
+
+    public function deletequestioncomment(){
+        $data = Request::all();
+
+        $token = Request::header('JWT-AuthToken');
+
+        $admintoken = Users::select('role')->where('token','=',$token)->first();
+
+        if($admintoken['role'] == 1){
+            
+            Comments::where('commentid','=',$data['cid'])->delete();
+            return 'Comment Deleted';
+        }else{
+            return 'bad request';
+        }
+    }
+
+    public function deleteanswercomment(){
+        $data = Request::all();
+
+        $token = Request::header('JWT-AuthToken');
+
+        $admintoken = Users::select('role')->where('token','=',$token)->first();
+
+        if($admintoken['role'] == 1){
+            
+            AnswerComment::where('commentid','=',$data['cid'])->delete();
+            return 'Comment Deleted';
+        }else{
+            return 'bad request';
+        }
     }
 };

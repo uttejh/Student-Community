@@ -7,6 +7,8 @@ use Response;
 use Carbon\Carbon;
 use App\Paper;
 use App\Tags;
+use App\Users;
+use App\Question;
 // use App\Users;
 use Illuminate\Database\Eloquent\Model;
 
@@ -104,14 +106,30 @@ class UserCtrl extends Controller
 
     public function addtag(){
     	$details = Request::all();
+        $var1 = $details['thetag'];
+        $var2 = $details['tagdesc'];
+        if(!empty($var1) && !empty($var2))
+        {
+            if(strlen($var1) > 30){
+                return 'The Tag field cannot be greater than 30 characters';
+            }
+            elseif (strlen($var2) < 30 || strlen($var2) > 250) {
+                return 'The Description field must be between 30 and 250 characters';
+            }
+            else{
+                $tag = new Tags;
+                $tag->tag = $var1;
+                $tag->description = $var2;
+                $tag->flag = 0;
+                $tag->save();
 
-    	$tag = new Tags;
-    	$tag->tag = $details['thetag'];
-    	$tag->description = $details['tagdesc'];
-    	$tag->flag = 0;
-    	$tag->save();
-
-    	return 'success';
+                return 'Tag was inserted Successfully';
+            }
+        }
+        else{
+            return 'The fields cannot be empty';
+        }
+    	
     }
 
     public function getpapers(){
@@ -120,9 +138,91 @@ class UserCtrl extends Controller
 
     	// $names = explode(",", $details);
     	
-    	$returnvalue = Paper::select('name','year','branch','filepath')->whereIn('name',$details)->get();
+    	$returnvalue = Paper::select('pid','name','year','branch','filepath')->whereIn('name',$details)->get();
 
 
     	return $returnvalue ;
+    }
+
+    public function deletepaper(){
+        $data = Request::all();
+
+        $token = Request::header('JWT-AuthToken');
+
+        $admintoken = Users::select('role')->where('token','=',$token)->first();
+        $destination_path="uploads";
+
+        if($admintoken['role'] == 1){
+            $path = Paper::where('pid','=',$data['id'])->select('filepath')->first();
+            unlink($path['filepath']);
+            Paper::where('pid','=',$data['id'])->delete();
+            
+            return 'Paper Deleted';
+        }else{
+            return 'bad request';
+        }
+    }
+
+    public function changepassword()
+    {
+    	$data = Request::all();
+
+    	$token = Request::header('AuthToken');
+
+    	$count = Users::where('token','=',$token)->count();
+
+    	if($count == 1){
+    		$old = users::select('password')->where('token','=',$token)->first();
+    		if($old['password'] == md5($data['current'])){
+    			$var1 = $data['new'];
+    			$var2 = $data['confirm'];
+    			$length = strlen($var1);
+    			if(!empty($var1) == !empty($var2))
+    			{
+    				if($length > 5){
+    					Users::where('token','=',$token)->update(['password'=>md5($var1)]) ;
+    					return 'Password updated successfully.';
+    				}
+    				else
+    				{
+    					return 'The password must be atleast 6 character long.';
+    				}
+    				
+    			}
+    			else{
+    				return 'The passwords do not match ';
+    			}
+    			
+    		}
+    		else{
+    			return 'Your Present Password did not match with the password you typed.';
+    		}
+    	}else{
+    		return 'Unauthenticated User';
+    	}
+    }
+
+    public function userqs(){
+    	// $data = Request::all();
+
+    	$token = Request::header('AuthToken');
+
+    	$count = Users::where('token','=',$token)->count();
+
+    	if($count == 1)
+    	{
+    		$user = Users::select('id')->where('token','=',$token)->first();
+    		$userqs = Question::where('askedby','=',$user['id'])->get();
+    		$i=0;
+        	$ret[]=0;
+    		foreach($userqs as $qu) // or foreach(Location::with("users")->get() as $location)
+	        {
+	          $ret[$i++]= $qu->answers()->count();
+	        }
+    		return array('questions'=>$userqs,'answercount'=>$ret);
+    	}
+    	else{
+    		return 'Unauthenticated user';
+    	}
     }
 }

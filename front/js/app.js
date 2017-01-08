@@ -16,6 +16,21 @@ app.directive('fileModel', ['$parse', function ($parse) {
     };
 }]);
 
+app.directive('ngConfirmClick', [
+        function(){
+            return {
+                link: function (scope, element, attr) {
+                    var msg = attr.ngConfirmClick || "Are you sure?";
+                    var clickAction = attr.confirmedClick;
+                    element.bind('click',function (event) {
+                        if ( window.confirm(msg) ) {
+                            scope.$eval(clickAction)
+                        }
+                    });
+                }
+            };
+    }]);
+
 // app.
 //   filter('htmlToPlaintext', function() {
 //     return function(text) {
@@ -153,13 +168,31 @@ app.config(function($stateProvider,$urlRouterProvider){
 				}
 			}
 		})
+		.state('profile',{
+			url:"/profile",
+			views:{
+				"main":{
+					templateUrl:"partials/profile.html",
+					data:{title:'My Profile'},
+					controller:'ProfileController'
+				}
+			}
+		})
 		.state('question',{
 			url:"/question/:qid", ///:qid
 			views:{
 				"main":{
 					templateUrl:"partials/question.html",
 					// data:{title:'Ask Question'},
-					controller:'seperatequestion'
+					controller:'seperatequestion',
+					// params: {qid: null},
+					// onEnter: function ($state, $stateParams, $cookies) {
+				 //      console.log($stateParams.qid);
+				 //      if (!$stateParams.qid) {
+				 //        // $stateParams.restaurantId = $cookies.restaurantId;
+				 //        $state.go('DiscussionForum');
+				 //      }
+				 //    },
 				}
 			}
 		})

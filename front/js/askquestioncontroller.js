@@ -23,7 +23,7 @@ app.controller('askquestioncontroller',['$scope','$state','$rootScope','$http',f
 			})
 			.success(function(result){
 				$rootScope.showloader=false;
-				alert(result);
+				$state.go('DiscussionForum');
 				console.log(result);
 			}).error(function(data){
 				$rootScope.showloader=false;

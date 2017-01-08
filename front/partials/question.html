@@ -1,4 +1,100 @@
-<div style="padding-top:10px" >
+<div style="padding-top:10px" class="container">
+
+		<!-- <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Open Modal</button> -->
+
+	<!-- Modal -->
+	<div id="myModal" class="modal fade" role="dialog">
+	  <div class="modal-dialog">
+
+	    <!-- Modal content-->
+	    <div class="modal-content row">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal">&times;</button>
+	        <h4 class="modal-title">EDIT QUESTION</h4>
+	      </div>
+	      <div class="modal-body">
+	        <form name="myform" >
+	        	<div class="col-md-12" style="padding-bottom: 10px;">
+	        		<input type="text" ng-model="myform.title" class="form-control">
+	        	</div>
+	        	<div class="col-md-12" style="padding-bottom: 10px;">
+	        		<!-- <div  ng-bind-html="myform.body" ></div> -->
+	        		<textarea ui-tinymce="tinymceOptions" ng-model="myform.body" style="height:300px" ></textarea>
+
+	        	</div>
+	        	<div class="col-md-12" style="padding-bottom: 10px;">
+	        		<button class="btn btn-primary" type="submit" ng-click="editquestion(question.qid)">
+						Apply Edits
+					</button>
+			        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	        	</div>
+	        </form>
+	      </div>
+	      <!-- <div class="modal-footer">
+	      	<button class="btn btn-primary" type="submit">
+				Submit
+			</button>
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	      </div> -->
+	    </div>
+
+	  </div>
+	</div>
+
+
+
+	<!-- Modal -->
+	<div id="Modal" class="modal fade" role="dialog">
+	  <div class="modal-dialog">
+
+	    <!-- Modal content-->
+	    <div class="modal-content row">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal">&times;</button>
+	        <h4 class="modal-title">LOG IN</h4>
+	      </div>
+	      <div class="modal-body">
+	        <!-- <form name="myform" >
+	        	<div  class="container-fluid" ng-show="loginnow"> -->
+					<!-- <div class="well well-lg row"> -->
+						<!-- <legend>Log In</legend> -->
+						<form>
+							<div class="bg bg-danger" >
+								<center>{{errormesg}}</center>
+							</div>
+							<div class="col-md-12" style="padding-top: 10px ;padding-bottom: 10px;">
+								<input type="text" ng-model="user.username" placeholder="Username" class="col-md-12 form-control">
+							</div>
+							<div class="col-md-12">
+								<input type="password" ng-model="user.password" placeholder="Password" class="col-md-12 form-control">
+							</div>
+							<div class="col-md-12" style="padding-top:10px;">
+								<input type="checkbox" ng-model="user.rememberme" name="remember">
+			       				&nbsp;&nbsp;Remember Me
+							</div>
+							<div class="col-md-12" style="margin: 10px;">
+								<div class="btn btn-info" ng-click="login()">
+									Log in
+								</div>	
+							</div>
+						</form>
+					<!-- </div> -->
+				<!-- </div>
+	        </form> -->
+	      </div>
+	      <!-- <div class="modal-footer">
+	      	<button class="btn btn-primary" type="submit">
+				Submit
+			</button>
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	      </div> -->
+	    </div>
+
+	  </div>
+	</div>
+
+
+
 	<div class="col-md-12">
 		<div class="col-md-8">
 			<div class="col-md-12">
@@ -24,8 +120,16 @@
 
 			<div class="col-md-12">
 				<div class="col-md-8">
-					<div style ="float:left" class="tagsshow" ng-repeat="x in question.tags" ui-sref="tagged({tag:x})">
+					<div style ="float:left" class="tagsshow" ng-repeat="x in question.tags" ui-sref="tagged({tag:x})" >
 						{{x}}
+					</div>
+					<div  >
+						<button class="btn btn-danger btn-sm" confirmed-click="deletequestion(question.qid)" ng-confirm-click="Do you really want to delete it?" ng-show="adminuser">
+							<span class="glyphicon glyphicon-trash">
+								
+							</span>
+							Delete
+						</button>
 					</div>
 				</div>
 				<div class="col-md-4">
@@ -42,6 +146,14 @@
 			<div class="col-md-12" ng-hide="nocomments" style="padding-top: 5px;">
 				<div class="col-md-10 col-md-push-1" style="background-color: #f0f0f0;border-bottom: 1px solid #d8d1d1;border-radius: 4px;" ng-repeat="x in question.comments  | limitTo:num  track by $index">
 					{{x.comment}} - <strong>{{x.commenter.username}}</strong>
+					<div class="pull-right"  ng-show="adminuser">
+						<button class="btn btn-danger btn-sm" ng-confirm-click="Do you really want to delete it?" confirmed-click="deleteqc(x.commentid)" >
+							<span class="glyphicon glyphicon-trash">
+								
+							</span>
+							Delete
+						</button>
+					</div>
 					<!-- <hr style="padding: 1px;"/> -->
 				</div>
 				<div class="col-md-2"></div>
@@ -50,6 +162,9 @@
 			<div class="col-md-12" style="padding-top: 5px; color: #0880d6;" >
 				<div class="col-md-6 col-md-push-1" ng-show="commentshigh" style="cursor: pointer" ng-click="highcoms()">Show All Comments</div>
 				<div ng-click="comment=true" ng-hide="comment" class="pull-right" style="cursor: pointer">Add a comment</div>
+				<div class="col-md-1 pull-right"></div>
+				<div data-toggle="modal" class="pull-right" ng-show="qposer" data-target="#myModal" style="cursor: pointer">Edit </div>
+
 			</div>
 			<div class="col-md-12">
 				
@@ -61,6 +176,7 @@
 						<button class="btn btn-primary" ng-click="postcomment()">
 							Add Comment
 						</button>
+
 					</div>
 				</div>
 			</div>
@@ -71,21 +187,40 @@
 				
 			</div> -->
 			<div class="col-md-12">
-				<div ng-repeat="y in question.answer">
-					<div class="col-md-12">
+				<div ng-repeat="y in question.answer ">
+					<div class="col-md-12" ng-hide="y.iscorrect">
 						<div class="alert alert-info"><h3><center>Answer {{$index+1}} :</center></h3></div>
 					</div>
-					<div class="col-md-1">
+					<div class="col-md-12" ng-if="y.iscorrect">
+						<div class="alert alert-success"><h3><center>Answer {{$index+1}} :</center></h3></div>
+					</div>
+					<div class="col-md-1" ng-hide="isans">
 						<!-- <i class="fa fa-check fa-4x"></i> -->
-						<div class="glyphicon glyphicon-ok" style="font-size: 3em;cursor: pointer;">
+						<div class="glyphicon glyphicon-ok" ng-show="qposer" title="Mark the answer as correct" style="font-size: 3em;cursor: pointer;" ng-click="correctanswer(y.aid,y.qid,$index)">
 							
 						</div>
+					</div>
+					<div class="col-md-1" ng-if="y.iscorrect || temp[$index]">
+						<div class="glyphicon glyphicon-ok" title="The answer is marked as the correct answer." style="font-size: 3em;cursor: pointer;color : #1f900b;">
+						</div>
+					</div>
+					<div class="col-md-1" ng-show="!y.iscorrect && !temp[$index] && isans">
+						
 					</div>
 					<div class="col-md-11">
 						<div ng-bind-html="y.answer" style="border-bottom: 1px solid #dad6d6;">
 				
 						</div>
+
 						<div class="col-md-12">
+							<div class="col-md-8"  ng-show="adminuser">
+								<button class="btn btn-danger btn-sm" confirmed-click="deleteanswer(question.qid,y.aid)" ng-confirm-click="Do you really want to delete it?">
+									<span class="glyphicon glyphicon-trash">
+										
+									</span>
+									Delete
+								</button>
+							</div>
 							<div class="col-md-4 pull-right" style="padding-top: 5px">
 								<div class="well well-sm">
 									<center>
@@ -108,6 +243,14 @@
 							<div class="col-md-10 col-md-push-1" style="background-color: #f0f0f0;border-bottom: 1px solid #d8d1d1;border-radius: 4px;" ng-repeat="x in y.answercomments | limitTo: x.limit || 5 track by $index " >
 								
 								{{x.comment}} - <strong>{{x.anscommenter.username}}</strong>
+								<div class="pull-right"  ng-show="adminuser">
+									<button class="btn btn-danger btn-sm" ng-confirm-click="Do you really want to delete it?" confirmed-click="deleteac(x.commentid)">
+										<span class="glyphicon glyphicon-trash">
+											
+										</span>
+										Delete
+									</button>
+								</div>
 							</div>
 
 						</div>
@@ -124,7 +267,7 @@
 							</div>
 							<div class="col-md-12" style="padding-top: 5px; color: #0880d6;" > <!--   -->
 								<div class="col-md-6 col-md-push-1" style="cursor: pointer" ng-hide="y.answercomments.length < 6 ||hideoff" ng-click="x.limit=x.limit+100; hideoff=true">Show All Comments</div>
-								<div ng-click="anscomment[$index]=true"  ng-hide="anscomment[$index]" class="pull-right" style="padding-top: 5px; color: #0880d6;cursor: pointer">	Add a comment
+								<div ng-click="anscomment[$index]=true;y.addanscomment=null"  ng-hide="anscomment[$index]" class="pull-right" style="padding-top: 5px; color: #0880d6;cursor: pointer">	Add a comment
 								</div>	
 							</div>
 							
@@ -151,43 +294,38 @@
 		<div class="col-md-4 affix" style="right:10px;">
 			
 			<div class="col-md-12">
-				<div class="well wll-lg row" style="height:45vh;">
-					RULES:
+				<legend>Be Knowledgeable</legend>
+				<div class="col-md-12 bg bg-warning text-warning ruless">
+					<li style="list-style-type: circle;">
+						<strong>Hola! </strong> This is all the data related to this question.
+					</li>
+					<li style="list-style-type: circle;">
+						Only <strong> registered users </strong> can comment or answer the question. 
+					</li>
+					<li style="list-style-type: circle;"> 
+						Only <strong>Question Poser</strong> will be able to <strong> EDIT</strong> the question.
+					</li>
+					<li style="list-style-type: circle;">
+						To add a code to your answer please use <strong>{;}</strong> and add your code.
+					</li>
+					<!-- <li style="list-style-type: circle;">
+						Then add the related tags of your question so that the questions are sorted and answered by experts.
+					</li>
+					
+					<li style="list-style-type: circle;">
+						<strong>Finally! </strong> Press the submit button and wait for the answers.
+					</li> -->
+					<li style="list-style-type: circle;">
+						Whatever information you would be posting will be helping others in different ways.
+					</li>
 				</div>
 			</div>
-			<!-- <div class="col-md-12"> -->
-				<div class="col-md-12" style="bottom:10px;">
-					<div  class="container-fluid" ng-show="loginnow">
-						<div class="well well-lg row">
-							<legend>Log In</legend>
-							<p class="bg-danger" style="padding:3px;text-align:center" ng-show="showerror">{{error_msg}}</p>
-							<form ng-submit="">
-								<div class="col-md-12" style="padding-bottom: 10px;">
-									<input type="text" ng-model="user.username" placeholder="Username" class="col-md-12 form-control">
-								</div>
-								<div class="col-md-12">
-									<input type="password" ng-model="user.password" placeholder="Password" class="col-md-12 form-control">
-								</div>
-								<div class="col-md-12" style="padding-top:10px;">
-									<input type="checkbox" ng-model="user.rememberme" name="remember">
-				       				&nbsp;&nbsp;Remember Me
-								</div>
-								<div class="col-md-12" style="margin: 10px;">
-									<div class="btn btn-info" ng-click="login()">
-										Log in
-									</div>	
-								</div>
-							</form>
-						</div>
-					</div>
-				</div>
-			<!-- </div> -->
 		</div>
 	</div>
 	<div class="col-md-12">
 		<h3 style="padding-bottom: 10px;">Post Your Answer:</h3>
 		<div class="col-md-8">
-			<form method="post" ng-submit="answer()">
+			<form method="post" ng-submit="answer(question.qid)">
 				<textarea ui-tinymce="tinymceOptions" ng-model="ans" style="height:300px" placeholder="Body of your question"></textarea>
 
 				<div class="col-md-12" style="padding-top: 10px">

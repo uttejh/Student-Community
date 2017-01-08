@@ -132,7 +132,11 @@ app.filter('unsafe', function($sce) {
 
 });
 
-app.controller('seperatequestion',['$scope','$rootScope','$http','$stateParams','$cookies',function($scope,$rootScope,$http,$stateParams,$cookies){
+app.controller('seperatequestion',['$scope','$rootScope','$http','$stateParams','$cookies','$state',function($scope,$rootScope,$http,$stateParams,$cookies,$state  ){
+	if(typeof $stateParams.qid == 'undefined') {
+		// console.log($stateParams.qid);
+        $state.go('DiscussionForum');
+    }
 	$rootScope.showloader=true;
 	var cookietoken = $cookies.get('scomToken');
 	var nametoken = $cookies.get('userproname');
@@ -141,6 +145,10 @@ app.controller('seperatequestion',['$scope','$rootScope','$http','$stateParams',
 	$scope.numone = 5;
 	for(var i=0;i<5;i++){
 		$scope.numone[i] = 5;
+	}
+	$scope.myform ={
+		title:'',
+		body:''
 	}
 
 
@@ -155,7 +163,8 @@ app.controller('seperatequestion',['$scope','$rootScope','$http','$stateParams',
 		url : $rootScope.apiend + '/getquestiondet',
 		params:{
 			id:$stateParams.qid
-		}
+		},
+		headers:{'JWT-AuthToken':localStorage.authscomtoken}
 	}).success(function(result){
 		$scope.question = result;
 		if($scope.question.comments==0)
@@ -174,6 +183,17 @@ app.controller('seperatequestion',['$scope','$rootScope','$http','$stateParams',
 			$scope.commentshigh = false;
 		}
 		$rootScope.showloader=false;
+		if(result['isanswered'] == 1){
+			$scope.isans = true;
+		}
+		if(result['message']=='202'){
+			$scope.qposer = true;
+		}
+		$scope.myform.title = angular.copy($scope.question.question);
+		$scope.myform.body = angular.copy($scope.question.body);
+	// 		else{
+	// 			alert('something is wrong');
+	// 		}
 		
 		console.log(result);
 	}).error(function(data){
@@ -277,8 +297,9 @@ app.controller('seperatequestion',['$scope','$rootScope','$http','$stateParams',
 	}
 
 	$scope.ans="";
-	$scope.answer = function()
+	$scope.answer = function(q_id)
 	{
+		// console.log(q_id);
 		$rootScope.showloader=true;
 		if(cookietoken)
 		{
@@ -293,6 +314,15 @@ app.controller('seperatequestion',['$scope','$rootScope','$http','$stateParams',
 			}).success(function(result){
 				$rootScope.showloader=false;
 				console.log(result);
+				if(result['status']=='done'){
+					// $state.go('question',{qid: q_id});
+					// $state.reload();
+					$state.go($state.current, {qid: q_id}, {reload: true});
+
+				}
+				else if(result['status'] == 'empty'){
+					alert(result['message']);
+				}
 			}).error(function(result){
 				$rootScope.showloader=false;
 				alert('something is wrong!');
@@ -301,9 +331,33 @@ app.controller('seperatequestion',['$scope','$rootScope','$http','$stateParams',
 		else{
 			$rootScope.showloader=false;
 			alert('You need to login');
-			$scope.loginnow = true;
+			// $scope.loginnow = true;
+			$('#Modal').modal('show');
 		}
 	}
+
+	
+	
+
+	// if(cookietoken)
+	// {
+	// 	$http({
+	// 		method:'POST',
+	// 		url : $rootScope.apiend + '/postanswer',
+	// 		headers:{'JWT-AuthToken':localStorage.authscomtoken}
+	// 	}).success(function(result)
+	// 	{
+	// 		if(result['message']='202'){
+	// 			$scope.qposer = true;
+	// 		}
+	// 		else{
+	// 			alert('something is wrong');
+	// 		}
+
+	// 	}).error(function(data){
+	// 		alert('something is wrong');
+	// 	})
+	// }
 
 	$scope.user={
 		username:"",
@@ -358,12 +412,14 @@ app.controller('seperatequestion',['$scope','$rootScope','$http','$stateParams',
 				// }
 				// $state.go('home');
 				$scope.user="";
+				$('#Modal').modal('hide');
+				cookietoken = $cookies.get('scomToken');
 				$rootScope.showloader=false;
 			}
 			else
 			{
 				$rootScope.showloader=false;
-				$scope.error_msg=result;
+				$scope.errormesg=result;
 				console.log(result);
 				$rootScope.showerror=true;
 			}
@@ -374,12 +430,34 @@ app.controller('seperatequestion',['$scope','$rootScope','$http','$stateParams',
 		;
 
 	};
+	// $scope.alertansclass = 'alert alert-info';
+
 
 	$scope.highcoms = function(){
 		$scope.commentshigh =false;
 		$scope.num = 1000;
 	}
+	$scope.temp = [];
+	$scope.correctanswer = function(id,qid,$index){
+		// alert(id);
+		$http({
+			method:"POST",
+			url:$rootScope.apiend+'markanswer',
+			data:{id:id,qid:qid},
+			headers:{'JWT-AuthToken':localStorage.authscomtoken}
 
+		}).success(function(result){
+			
+			if(result == 'You are not permitted to mark the answer.')
+			{
+				alert(result);
+			}
+			else{
+				$scope.isans=true;
+				$scope.temp[$index] = true;
+			}
+		})
+	}
 	// $scope.increaselimit = function(obj)
 	// {
 	// 	 if (obj) {
@@ -389,6 +467,76 @@ app.controller('seperatequestion',['$scope','$rootScope','$http','$stateParams',
 	// 	  	 obj = 40;
 	// 	 }
 	// }
+
+	$scope.editquestion = function(qid){
+		// alert($scope.myform.body);
+		$http({
+			method:"POST",
+			url:$rootScope.apiend+'editquestion',
+			headers:{'JWT-AuthToken':localStorage.authscomtoken},
+			data:{form:$scope.myform,id:qid}
+		}).success(function(result){
+			alert(result);
+			// $('#myModal').close();
+			$('#myModal').modal('toggle');
+			console.log(result);
+		}).error(function(data){
+			alert('something is wrong!');
+		})
+		
+	}
+
+	$scope.deletequestion = function(qid){
+		$http({
+			method:"GET",
+			url:$rootScope.apiend+'deletequestion',
+			headers:{'JWT-AuthToken':localStorage.authscomtoken},
+			params:{id:qid}
+		}).success(function(result){
+			alert(result);
+		}).error(function(data){
+			alert('something is wrong!');
+		})
+	}
+
+	$scope.deleteanswer = function(qid,aid){
+		$http({
+			method:"GET",
+			url:$rootScope.apiend+'deleteanswer',
+			headers:{'JWT-AuthToken':localStorage.authscomtoken},
+			params:{id:qid,aid:aid}
+		}).success(function(result){
+			alert(result);
+		}).error(function(data){
+			alert('something is wrong!');
+		})
+	}
+
+	$scope.deleteqc = function(commentid){
+		$http({
+			method:"GET",
+			url:$rootScope.apiend+'deletequestioncomment',
+			headers:{'JWT-AuthToken':localStorage.authscomtoken},
+			params:{cid:commentid}
+		}).success(function(result){
+			alert(result);
+		}).error(function(data){
+			alert('something is wrong!');
+		})
+	}
+
+	$scope.deleteac = function(commentid){
+		$http({
+			method:"GET",
+			url:$rootScope.apiend+'deleteanswercomment',
+			headers:{'JWT-AuthToken':localStorage.authscomtoken},
+			params:{cid:commentid}
+		}).success(function(result){
+			alert(result);
+		}).error(function(data){
+			alert('something is wrong!');
+		})
+	}
 	
 }]);
 
@@ -406,6 +554,10 @@ app.controller('taggedcontroller',['$scope','$rootScope','$http','$stateParams',
 		$scope.last = result['total'];
 		console.log(result);
 		$rootScope.showloader=false;
+		if($scope.questions.questions.length == 0)
+		{
+			$scope.showemptyme = true;
+		}
 	});
 	$scope.tagtitle = $stateParams.tag;
 

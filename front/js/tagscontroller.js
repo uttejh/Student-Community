@@ -8,6 +8,7 @@ app.controller('TagsController',['$scope','$rootScope','$http','$cookies',functi
 		$scope.mydata = result;
 		$scope.last = result['total'];
 		$rootScope.showloader=false;
+		console.log(result);
 	})
 	var cookietoken = $cookies.get('scomToken');
 
@@ -20,14 +21,18 @@ app.controller('TagsController',['$scope','$rootScope','$http','$cookies',functi
 		$rootScope.showloader=true;
 		if(cookietoken)
 		{
+			// console.log($scope.data)
+			$scope.showerr = false;
 			$http({
 				method:"POST",
 				url:$rootScope.apiend+"addtag",
 				headers:{'AuthToken':localStorage.authtoken},
 				data:$scope.data
 			}).success(function(result){
-				console.log(result);
+				// console.log(result);
 				$rootScope.showloader=false;
+				$scope.alertwarn = result;
+				$scope.showerr = true;
 			}).error(function(data){
 				$rootScope.showloader=false;
 				alert('something is wrong!');
@@ -37,6 +42,19 @@ app.controller('TagsController',['$scope','$rootScope','$http','$cookies',functi
 			$rootScope.showloader=false;
 			alert('You need to login inorder to add any tag.')
 		}
+	}
+
+	$scope.deletetag = function(id){
+		$http({
+			method:"GET",
+			url:$rootScope.apiend+'deletetag',
+			headers:{'JWT-AuthToken':localStorage.authscomtoken},
+			params:{id:id}
+		}).success(function(result){
+			alert(result);
+		}).error(function(data){
+			alert('something is wrong!');
+		})
 	}
 
 

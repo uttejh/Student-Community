@@ -27,6 +27,8 @@ Route::post('/postanscomment','QuestionCtrl@postanscomment');
 
 Route::post('/postanswer','QuestionCtrl@postanswer');
 
+Route::post('/markanswer','QuestionCtrl@markanswer');
+
 // Route::get('/showquestion','SaveQuestionCtrl@getq');
 
 Route::post('/askquestion','SaveQuestionCtrl@saveques');
@@ -37,10 +39,28 @@ Route::post('/register','RegisterCtrl@register');
 
 Route::post('/uploadpost','UserCtrl@uploadpost');
 
+Route::get('/deletepaper','UserCtrl@deletepaper');
+
 Route::get('/gettags','TagsCtrl@gettags');
+
+Route::get('/deletetag','TagsCtrl@deletetag');
 
 Route::get('/getnames','UserCtrl@getlist');
 
 Route::post('/addtag','UserCtrl@addtag');
 
 Route::get('/getpapers','UserCtrl@getpapers');
+
+Route::post('/editquestion','QuestionCtrl@editquestion');
+
+Route::get('/deletequestion','QuestionCtrl@deletequestion');
+
+Route::get('/deleteanswer','QuestionCtrl@deleteanswer');
+
+Route::get('/deletequestioncomment','QuestionCtrl@deletequestioncomment');
+
+Route::get('/deleteanswercomment','QuestionCtrl@deleteanswercomment');
+
+Route::post('/changepass','UserCtrl@changepassword');
+
+Route::get('/getuserquestions','UserCtrl@userqs');

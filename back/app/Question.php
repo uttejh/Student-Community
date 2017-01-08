@@ -34,5 +34,18 @@ class Question extends Model
 		return $this->hasOne('App\Users','id','askedby','q_id');
 	}
 
+	public static function boot()
+    {
+        parent::boot();    
+    
+        // cause a delete of a product to cascade to children so they are also deleted
+        static::deleted(function($product)
+        {
+            $product->answers()->delete();
+            $product->qtags()->delete();
+            $product->comments()->delete();
+        });
+    }   
+
 	
 }

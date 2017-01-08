@@ -41,6 +41,7 @@ app.controller('DownloadController',['$scope','$rootScope','$state','$http',func
 
 	$scope.getlist = function(){
 		$rootScope.showloader=true;
+		$scope.selected.length = 0;
 		$scope.list.length = 0;
 		console.log($scope.type);
 		$http({
@@ -90,6 +91,7 @@ app.controller('DownloadController',['$scope','$rootScope','$state','$http',func
 			}
 			else
 			{
+				// $scope.choosen.length = 0;
 				$http({
 					method:"GET",
 					url:$rootScope.apiend+'getpapers',
@@ -119,5 +121,18 @@ app.controller('DownloadController',['$scope','$rootScope','$state','$http',func
 			alert('Please login to download.');
 			$state.go('login_register');
 		}
+	}
+
+	$scope.deleteit = function(id){
+		$http({
+			method:"GET",
+			url:$rootScope.apiend+'deletepaper',
+			headers:{'JWT-AuthToken':localStorage.authscomtoken},
+			params:{id:id}
+		}).success(function(result){
+			alert(result);
+		}).error(function(data){
+			alert('something is wrong!');
+		})
 	}
 }])

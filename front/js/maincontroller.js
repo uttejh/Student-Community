@@ -6,6 +6,14 @@ app.controller('MainController',['$rootScope','$scope','$state','$http','$cookie
 		$scope.title=data;
 	});
 	var cookietoken = $cookies.get('scomToken');
+	var userrole = $cookies.get('userrole');
+	if(userrole == '1')
+	{
+		$rootScope.adminuser = true;
+	}
+	if(cookietoken == null){
+		localStorage.removeItem('authscomtoken');
+	}
 	$rootScope.userprofilename = $cookies.get('userproname');
 
 	$rootScope.signedin = false;
@@ -106,6 +114,10 @@ app.controller('MainController',['$rootScope','$scope','$state','$http','$cookie
 				// $cookies.put('userproname',$scope.user.username);
 				$rootScope.userprofilename = $cookies.get('userproname');
 				$cookies.put('userrole',result['role']);
+				if(result['role'] == '1')
+				{
+					$rootScope.adminuser = true;
+				}
 				// if(result['userrole']=='1')
 				// {
 				// 	// $state.go('dashboard');

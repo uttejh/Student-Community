@@ -25,14 +25,21 @@
 				<div class="">
 				  	<div class="" >
 				  	
-	       
+	       				<div style="padding-top: 10px;">
+	       					<div class="alert alert-warning" style="font-size: 20px;" ng-show="showemptyme">
+		       					<center>There are no questions asked related to this tag.</center>
+		       				</div>
+	       				</div>
 						<div ng-repeat="x in questions.questions">
 							<div class="row question_df_clone">
 								<div class="col-md-2 col-sm-2 col-xs-4 q_ans">
-									<ul class="list-group">
-										<li>{{questions.count[$index]}}</li>
-										<li>Answers</li>
-									</ul>
+									<div style="margin-right: 20px;margin-left: 20px;padding-top:5px;" ng-class="{answered:{{x.relques.isanswered}}}">
+	
+										<ul class="list-group">
+											<li>{{questions.count[$index]}}</li>
+											<li>Answers</li>
+										</ul>
+									</div>
 								</div>
 								<div class="col-md-10">
 									<div class="q_ques">

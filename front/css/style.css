@@ -352,6 +352,14 @@ footer
 {
     padding-right: 10px;
 }
+.ruless{
+    padding: 24px;
+    border-radius: 6px;
+    min-height: 20px;
+    padding: 19px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+}
 
 /*--------------------------------------------------------tags.html----------------------------------------------------------------*/
 
@@ -399,6 +407,10 @@ footer
 .panel_tabs
 {
     padding-left: 20px;
+}
+.answered
+{
+    background-color: #24ad24;
 }
 /*.q-info
 {

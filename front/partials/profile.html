@@ -1,0 +1,78 @@
+<div class="blue_desc">
+	My Profile
+</div>
+
+	<div id="myModal" class="modal fade" role="dialog">
+	  <div class="modal-dialog">
+
+	    <!-- Modal content-->
+	    <div class="modal-content row">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" ng-click="msg=false">&times;</button>
+	        <h4 class="modal-title">Add Tag</h4>
+	      </div>
+	      <div class="modal-body">
+	        <form ng-submit="changepass();myform = null" name="myform" >
+		        <div class="alert alert-warning" ng-show="msg">
+		        	<center>
+		        		{{errormsg}}
+		        	</center>
+		        </div>
+	        	<div class="col-md-12" style="padding-bottom:10px">
+	        		<input type="password" class="form-control" ng-model="myform.current" placeholder="Current Password">
+	        	</div>
+	        	<div class="col-md-12" style="padding-bottom:10px">
+	        		<input type="password" class="form-control" ng-model="myform.new" placeholder="New Password">
+	        	</div>
+	        	<div class="col-md-12" style="padding-bottom:10px">
+	        		<input type="password" class="form-control" ng-model="myform.confirm" placeholder="Confirm Password">
+	        	</div>
+	        	<button class="btn btn-primary" type="submit" style="margin-left:15px;">
+					Submit
+				</button>
+		        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="msg=false">Close</button>
+	        </form>
+	      </div>
+	     	
+	      <!-- <div class="modal-footer">
+	      	<button class="btn btn-primary" ng-click="addtag()">
+				Submit
+			</button>
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	      </div> -->
+	    </div>
+
+	  </div>
+	</div>
+
+<div class="container">
+	<div style="padding-top: 10px;">
+		<div class="col-md-12" >
+			<legend>
+				My Questions : 
+				<div class="pull-right btn btn-primary" data-toggle="modal" data-target="#myModal">
+					Change Password
+				</div>
+			</legend>
+			
+		</div>
+		<div class="col-md-12">
+			<div class="alert alert-warning" ng-show="newnempty">
+				<center style="font-size:19px;">
+					<strong>What?! </strong> Looks like you have not asked anything!
+				</center>
+				
+			</div>
+			<div class="col-md-12" ng-repeat="x in uq.questions" style="border-bottom: 1px solid #d8d8d8">
+				<div class="col-md-1" style="padding: 10px;" ng-class="{answered:{{x.isanswered}}}">
+					<center>&nbsp;&nbsp;{{uq.answercount[$index]}}&nbsp;&nbsp; Answers</center>
+					
+				</div>
+				<div class="col-md-11" style="padding: 10px;font-size:18px;cursor: pointer;" ui-sref="question({qid: x.q_id})">
+					{{x.title}}
+				</div>
+				<!-- <hr style="padding: 1px;margin:0px"> -->
+			</div>
+		</div>
+	</div>
+</div>

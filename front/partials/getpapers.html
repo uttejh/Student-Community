@@ -70,12 +70,29 @@
 								<th>Name Of The Subject</th>
 								<th>Branch</th>
 								<th>Year</th>
+								<th ng-show="adminuser">Modify</th>
 								
 							</tr>
 							<tr ng-repeat="x in choosen">
 								<td><a ng-href="../back/public/{{x.filepath}}" download>{{x.name}}</a></td>
 								<td>{{x.branch}} </td>
 								<td>{{x.year}} </td>
+								<td ng-show="adminuser">
+									<div class="">
+										<a class="btn btn-primary btn-sm" ng-href="../back/public/{{x.filepath}}" target="_blank">
+											<span class="glyphicon glyphicon-eye-open"></span>
+											view
+										</a>
+										<!-- <button class="btn btn-warning btn-sm">
+											<span class="glyphicon glyphicon-pencil"></span>
+											Modify
+										</button> -->
+										<button class="btn btn-danger btn-sm" ng-confirm-click="Do you really want to delete it?"  confirmed-click="deleteit(x.pid)">
+											<span class="glyphicon glyphicon-trash"></span>
+											Delete
+										</button>
+									</div>
+								</td>
 							</tr>
 						</thead>
 					</table>

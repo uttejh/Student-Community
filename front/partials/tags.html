@@ -6,55 +6,54 @@
 		Choose any tag and start answering them all
 	</div>
 
+	<!-- Modal -->
+	<div id="myModal" class="modal fade" role="dialog">
+	  <div class="modal-dialog">
 
+	    <!-- Modal content-->
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal">&times;</button>
+	        <h4 class="modal-title">Add Tag</h4>
+	      </div>
+	      <div class="modal-body">
+	        <!-- <form name="myForm" > -->
+	        <div class="alert alert-warning" ng-show="showerr">
+	        	<center>{{alertwarn}}</center>
+	        </div>
+				<input type="text" class="form-control" ng-model="data.thetag" placeholder="Tag Name (Less than 30 characters)">
+				<!-- <span class="text-danger bg-danger" ng-show="myForm.tag.$dirty && myForm.tag.$invalid">
+					<span class="text-danger bg-danger" ng-show="myForm.tag.$error.required">Cannot be empty.</span>
+					<span class="text-danger bg-danger" ng-show="myForm.tag.$error.minlength">Must be less than 30 characters</span>
+					
+				</span> -->
+				<!-- <div class="col-md-12 row"> -->
+				<textarea  class="form-control" style="margin-top: 10px;" ng-model="data.tagdesc" placeholder="Tag Description (Must be between 30 and 250 characters)" rows="5"></textarea>
+				<!-- </div> -->
+				
+			<!-- </form> -->
+	      </div>
+	      <div class="modal-footer">
+	      	<button class="btn btn-primary" ng-click="addtag()">
+				Submit
+			</button>
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	      </div>
+	    </div>
 
-	<!-- <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Open Modal</button> -->
-
-<!-- Modal -->
-<div id="myModal" class="modal fade" role="dialog">
-  <div class="modal-dialog">
-
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Add Tag</h4>
-      </div>
-      <div class="modal-body">
-        <!-- <form class="form-inline hidden-form" ng-show="default1"> -->
-			<input type="text" name="tag" class="form-control" ng-model="data.thetag" placeholder="Tag Name">
-			<!-- <div class="col-md-12 row"> -->
-			<textarea name="tag" class="form-control" style="margin-top: 10px;" ng-model="data.tagdesc" placeholder="Tag Description (Must be between 30 and 250 characters)" rows="5"></textarea>
-			<!-- </div> -->
-			
-		<!-- </form> -->
-      </div>
-      <div class="modal-footer">
-      	<button class="btn btn-primary" ng-click="addtag()">
-			Submit
-		</button>
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-
-
-
-
+	  </div>
+	</div>
 
 	<div class="col-md-12">
 		<form class="form-inline tags_form_outer" role="form">
 		    <div class="form-group tags_form">
 		      <label class="search_toggle" for="email">Search:</label>
-		      <input type="email" class="form-control tagsearch"  placeholder="Search any tag">
+		      <input type="text" class="form-control tagsearch" ng-model="search" placeholder="Search any tag">
 		    </div>
 	    </form>
 		<div class="add_tag"><!-- default1=!default1 -->
 				
-			<button type="button" class="btn btn-primary btn_add_tag" data-toggle="modal" data-target="#myModal">
+			<button type="button" class="btn btn-primary btn_add_tag" data-toggle="modal" data-target="#myModal" ng-click="showerr=false;data=null">
 				<span class="glyphicon glyphicon-plus" aria-hidden="true" ></span>
 				Add Tag
 			</button>
@@ -67,7 +66,8 @@
 			</button>
 		</div>
 	</div>
-	<div class="col-md-3" ng-repeat="x in mydata.tags" style="padding-bottom: 20px;">
+	<div class="col-md-12">
+		<div class="col-md-3" ng-repeat="x in mydata.tags | filter:search" style="padding-bottom: 20px;height: 180px;">
 		<div class="col-md-12 tagmain">
 			<!-- <strong>
 				{{x.tag}}
@@ -82,9 +82,16 @@
 		</div>
 		<div class="col-md-12">
 			<center>
-				{{x.description}}
+				{{x.description | limitTo:150}}
+				<div class="">
+					<button class="btn btn-danger btn-sm"  ng-show="adminuser" ng-confirm-click="Do you really want to delete it?" confirmed-click="deletetag(x.tagid)">
+						<span class="glyphicon glyphicon-trash"></span>
+						Delete {{x.tag}}
+					</button>
+				</div>
 			</center>
 		</div>
+	</div>
 	</div>
 	<div class="col-md-12">
 		<center>

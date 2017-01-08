@@ -2,7 +2,6 @@
 	<div class="blue_desc">
 		Discussion Forum
 	</div>
-
 	<div class="row main_df">
 		<div class="col-lg-8">
 			<div class="panel_tabs">
@@ -28,11 +27,13 @@
 	       
 						<div ng-repeat="x in questions.questions">
 							<div class="row question_df_clone">
-								<div class="col-md-2 col-sm-2 col-xs-4 q_ans">
-									<ul class="list-group">
-										<li>{{questions.count[$index]}}</li>
-										<li>Answers</li>
-									</ul>
+								<div class="col-md-2 col-sm-2 col-xs-4 q_ans" >
+									<div style="margin-right: 20px;margin-left: 20px;" ng-class="{answered:{{x.isanswered}}}">
+										<ul class="list-group" style="padding-top: 5px;padding-bottom: 5px;">
+											<li>{{questions.count[$index]}}</li>
+											<li>Answers</li>
+										</ul>
+									</div>
 								</div>
 								<div class="col-md-10">
 									<div class="q_ques">
@@ -92,7 +93,14 @@
 		</div>
 		<div class="col-lg-4">
 			<div class="well wll-lg">
-				RULES:
+				<legend>RULES</legend>
+				<ul>
+					<li style="list-style: upper-roman;">This page shows all the questions asked by various people. </li>
+					<li style="list-style: upper-roman;">You can view the content related to the question by clicking on the question.</li>
+					<li style="list-style: upper-roman;">Anyone can navigate to the questions related to different tags by clicking on the tag.</li>
+					<li style="list-style: upper-roman;">The number of answers for each question are also displayed.</li>
+					<li style="list-style: upper-roman;">If a question is solved then the question is indicated with a green color.</li>
+				</ul>
 			</div>
 		</div>
 	</div>		
