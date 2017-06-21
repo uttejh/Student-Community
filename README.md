@@ -7,10 +7,9 @@ Question Papers, Knowledge Sharing, etc... Thus, aimed at making internet a bett
 <h3>Front-end</h3>
 <ul>
 <li>HTML/CSS<br></li>
-<li><a href="http://getbootstrap.com/">Bootstrap</a>- Used for developing responsive, mobile first projects</li><br> 
+<li><a href="http://getbootstrap.com/">Bootstrap</a>- Used for developing responsive, mobile first projects</li>
 <li><a href="https://angular-ui.github.io/bootstrap/">UI Bootstrap</a> for <a href="https://angular-ui.github.io/">Angular UI</a></li>
 <li><a href="https://angularjs.org/">Angular JS V1</a> using <a href="https://ui-router.github.io/ng1/"> UI-router</a> - An amazing Javascript Framework built using MVC Framework</li>
-
 </ul>
 
 <h3>Back-end</h3>
