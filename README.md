@@ -1,6 +1,6 @@
 <h1>Student Community <b>(Learner Town)</b></h1>
 This is a project based on Networking and Resource sharing for Students,Professors and Learners. The Purpose of this is to connect
-learners across the world to help each other while also sharing resources. It is basically a forum for asking Questions, Discussions,
+learners across the world to help each other while also sharing resources. This is based on Responsive Web-Design. It is basically a forum for asking Questions, Discussions,
 Question Papers, Knowledge Sharing, etc... Thus, aimed at making internet a better place.
 
 <h1>Built With</h1>
